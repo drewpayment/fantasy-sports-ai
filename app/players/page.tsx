@@ -1,9 +1,28 @@
+"use client";
+
 import Layout from "@/components/Layout";
 import { Input } from "@/components/ui/input";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from "@/components/ui/table";
+import { useQuery } from "convex/react";
+import { api } from "@/convex/_generated/api";
 
 const PlayersPage = () => {
+  const players = useQuery(api.players.getPlayers);
+
   return (
     <Layout>
       <h1 className="text-3xl font-bold mb-8">Players</h1>
@@ -24,9 +43,7 @@ const PlayersPage = () => {
           <SelectTrigger className="w-[180px]">
             <SelectValue placeholder="Filter by team" />
           </SelectTrigger>
-          <SelectContent>
-            {/* Add NFL teams here */}
-          </SelectContent>
+          <SelectContent>{/* Add NFL teams here */}</SelectContent>
         </Select>
       </div>
       <div className="bg-secondary text-secondary-foreground rounded-lg shadow-lg">
@@ -34,22 +51,26 @@ const PlayersPage = () => {
           <TableHeader>
             <TableRow>
               <TableHead className="text-secondary-foreground">Name</TableHead>
-              <TableHead className="text-secondary-foreground">Position</TableHead>
+              <TableHead className="text-secondary-foreground">
+                Position
+              </TableHead>
               <TableHead className="text-secondary-foreground">Team</TableHead>
             </TableRow>
           </TableHeader>
           <TableBody>
-            {/* Player data will be mapped here */}
-            <TableRow>
-              <TableCell>Patrick Mahomes</TableCell>
-              <TableCell>QB</TableCell>
-              <TableCell>KC</TableCell>
-            </TableRow>
-            <TableRow>
-              <TableCell>Christian McCaffrey</TableCell>
-              <TableCell>RB</TableCell>
-              <TableCell>SF</TableCell>
-            </TableRow>
+            {players ? (
+              players.map((player) => (
+                <TableRow key={player._id}>
+                  <TableCell>{player.name}</TableCell>
+                  <TableCell>{player.position}</TableCell>
+                  <TableCell>{player.nflTeam}</TableCell>
+                </TableRow>
+              ))
+            ) : (
+              <TableRow>
+                <TableCell colSpan={3}>Loading players...</TableCell>
+              </TableRow>
+            )}
           </TableBody>
         </Table>
       </div>
