@@ -18,6 +18,7 @@ import type * as internal_yahoo from "../internal_yahoo.js";
 import type * as leagues from "../leagues.js";
 import type * as messages from "../messages.js";
 import type * as players from "../players.js";
+import type * as rosters from "../rosters.js";
 import type * as teams from "../teams.js";
 import type * as users from "../users.js";
 import type * as yahoo from "../yahoo.js";
@@ -37,6 +38,7 @@ declare const fullApi: ApiFromModules<{
   leagues: typeof leagues;
   messages: typeof messages;
   players: typeof players;
+  rosters: typeof rosters;
   teams: typeof teams;
   users: typeof users;
   yahoo: typeof yahoo;

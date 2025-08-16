@@ -79,6 +79,7 @@ export const updateLeagueSettings = mutation({
   args: {
     leagueId: v.id("leagues"),
     settings: v.any(),
+    name: v.string(), // Also update the name
   },
   handler: async (ctx, args) => {
     const identity = await ctx.auth.getUserIdentity();
@@ -102,6 +103,42 @@ export const updateLeagueSettings = mutation({
 
     await ctx.db.patch(args.leagueId, {
       settings: args.settings,
+      name: args.name,
+    });
+  },
+});
+
+/**
+ * Updates the name of a specific league.
+ * Only the league owner can update the name.
+ */
+export const updateLeagueName = mutation({
+  args: {
+    leagueId: v.id("leagues"),
+    newName: v.string(),
+  },
+  handler: async (ctx, args) => {
+    const identity = await ctx.auth.getUserIdentity();
+    if (!identity) {
+      throw new Error("User not authenticated");
+    }
+
+    const league = await ctx.db.get(args.leagueId);
+    if (!league) {
+      throw new Error("League not found");
+    }
+
+    const user = await ctx.db
+      .query("userProfiles")
+      .withIndex("by_clerk_id", (q) => q.eq("clerkId", identity.subject))
+      .unique();
+
+    if (!user || user._id !== league.ownerId) {
+      throw new Error("Only the league owner can update the name");
+    }
+
+    await ctx.db.patch(args.leagueId, {
+      name: args.newName,
     });
   },
 });

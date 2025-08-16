@@ -49,6 +49,32 @@ export const getTeamsForLeague = query({
 });
 
 /**
+ * Fetches all teams owned by the currently authenticated user.
+ */
+export const getTeamsForUser = query({
+  handler: async (ctx) => {
+    const identity = await ctx.auth.getUserIdentity();
+    if (!identity) {
+      return [];
+    }
+
+    const user = await ctx.db
+      .query("userProfiles")
+      .withIndex("by_clerk_id", (q) => q.eq("clerkId", identity.subject))
+      .unique();
+
+    if (!user) {
+      return [];
+    }
+
+    return ctx.db
+      .query("teams")
+      .withIndex("by_user", (q) => q.eq("userId", user._id))
+      .collect();
+  },
+});
+
+/**
  * Updates the name of a specific team.
  */
 export const updateTeamName = mutation({

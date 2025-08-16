@@ -1,16 +1,28 @@
 "use client";
 
 import Layout from "@/components/Layout";
-import { useQuery, useAction } from "convex/react";
+import { useQuery, useAction, useMutation } from "convex/react";
 import { api } from "@/convex/_generated/api";
 import { Button } from "@/components/ui/button";
 import { useUser } from "@clerk/nextjs";
+import { useState } from "react";
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from "@/components/ui/dialog";
+import { Input } from "@/components/ui/input";
 
 const DashboardPage = () => {
   const { user } = useUser();
   const leagues = useQuery(api.leagues.getLeaguesForUser);
   const getAuthorizationUrl = useAction(api.yahoo.getAuthorizationUrl);
-  
+  const createLeague = useMutation(api.leagues.createLeague);
+
+  const [newLeagueName, setNewLeagueName] = useState("");
+
   // Fetch user profile from Convex
   const userProfile = useQuery(api.users.getUserByClerkId, user ? { clerkId: user.id } : "skip");
   
@@ -35,14 +47,42 @@ const DashboardPage = () => {
       // Here you might want to refetch the user's leagues from your DB
     }
   };
+  
+  const handleCreateLeague = async () => {
+    if (newLeagueName) {
+      await createLeague({ name: newLeagueName, settings: {} });
+      setNewLeagueName("");
+      // You might want to close the dialog here
+    }
+  };
 
   return (
     <Layout>
       <div className="flex justify-between items-center mb-8">
         <h1 className="text-3xl font-bold">Dashboard</h1>
-        {!userProfile?.yahooAccessToken && (
-          <Button onClick={handleConnectYahoo}>Connect to Yahoo</Button>
-        )}
+        <div className="flex space-x-2">
+          {!userProfile?.yahooAccessToken && (
+            <Button onClick={handleConnectYahoo}>Connect to Yahoo</Button>
+          )}
+          <Dialog>
+            <DialogTrigger asChild>
+              <Button>Create League</Button>
+            </DialogTrigger>
+            <DialogContent>
+              <DialogHeader>
+                <DialogTitle>Create a New League</DialogTitle>
+              </DialogHeader>
+              <div className="grid gap-4 py-4">
+                <Input
+                  placeholder="League Name"
+                  value={newLeagueName}
+                  onChange={(e) => setNewLeagueName(e.target.value)}
+                />
+                <Button onClick={handleCreateLeague}>Create</Button>
+              </div>
+            </DialogContent>
+          </Dialog>
+        </div>
       </div>
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
         <div className="bg-secondary text-secondary-foreground p-6 rounded-lg shadow-lg col-span-1 md:col-span-2">

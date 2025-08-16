@@ -33,11 +33,40 @@ export default defineSchema({
   
   // A global table of all available players.
   players: defineTable({
-    name: v.string(),
-    position: v.string(), // e.g., 'QB', 'RB', 'WR'
-    nflTeam: v.string(), // e.g., 'Kansas City Chiefs'
-    yahooPlayerId: v.optional(v.string()), // ID from the Yahoo API
-  }),
+    fullName: v.string(), // Full name of the player
+    position: v.optional(v.string()), // e.g., 'QB', 'RB', 'WR'
+    team: v.optional(v.string()), // e.g., 'KC' for Kansas City Chiefs
+    hashtag: v.string(),
+    depth_chart_position: v.number(),
+    status: v.string(),
+    sport: v.string(),
+    fantasy_positions: v.array(v.string()),
+    number: v.number(),
+    search_last_name: v.string(),
+    injury_start_date: v.optional(v.string()),
+    weight: v.string(),
+    practice_participation: v.optional(v.string()),
+    sportradar_id: v.optional(v.string()),
+    last_name: v.string(),
+    college: v.string(),
+    fantasy_data_id: v.number(),
+    injury_status: v.optional(v.string()),
+    player_id: v.string(),
+    height: v.string(),
+    search_full_name: v.string(),
+    age: v.number(),
+    stats_id: v.optional(v.string()),
+    birth_country: v.optional(v.string()),
+    espn_id: v.string(),
+    search_rank: v.number(),
+    first_name: v.string(),
+    depth_chart_order: v.number(),
+    years_exp: v.number(),
+    rotowire_id: v.optional(v.string()),
+    rotoworld_id: v.optional(v.number()),
+    search_first_name: v.string(),
+    yahoo_id: v.optional(v.string()),
+  }).index("by_yahooPlayerId", ["yahoo_id"]),
 
   // A join table to represent the roster of players for each team.
   rosters: defineTable({

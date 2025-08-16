@@ -32,12 +32,38 @@
 - **Status**: Fully implemented and archived
 - **Archive Document**: `docs/archive/feature-api-integration-20241222.md`
 
-## Phase 4: Core Feature Implementation (Current)
+## Phase 4: Manual League Management (Current)
 
-- [x] **Authentication:** Integrate Clerk for user sign-up and login.
-- [ ] **League Settings:** Implement the UI for creating and editing league settings.
-- [ ] **Player List:** Display a searchable and filterable list of all players.
-- [ ] **Team Setup:** Allow users to create and manage teams in their league.
+### Description
+This phase focuses on building a complete, standalone experience for users to manually create, configure, and manage their fantasy leagues. It also includes the critical task of integrating a global third-party API for all NFL player data, which will serve as the foundation for roster management and future AI analysis.
+
+### PRD Document
+- `memory-bank/creative/prd-manual-league-management.md`
+
+### Implementation Plan
+
+**Sub-Phase 4.1: Global NFL Data API Integration**
+- [ ] **Task**: Research and select a third-party API for global NFL player data (players, stats, news).
+- [ ] **Task**: Implement a client to fetch data from the selected API.
+- [ ] **Task**: Create a new table in `convex/schema.ts` to store this global player data if the schema differs from our current `players` table.
+- [ ] **Task**: Implement a Convex cron job to periodically sync player data from the API to our database.
+
+**Sub--Phase 4.2: Comprehensive League Settings UI**
+- [ ] **Task (app/league/[leagueId]/page.tsx)**:
+  - [ ] Expand the "League Settings" page with a multi-section form.
+  - [ ] Implement the UI for "General Settings" (League Name, Number of Teams).
+  - [ ] Implement the UI for defining "Roster Positions" (e.g., QB, RB, WR, etc.).
+  - [ ] Implement the UI for defining "Scoring Rules" for all categories.
+- [ ] **Task (convex/leagues.ts)**:
+  - [ ] Update the `updateLeagueSettings` mutation to save the entire detailed settings object to the database.
+
+**Sub-Phase 4.3: Roster Management**
+- [ ] **Task**: Create a new page at `app/team/[teamId]/roster/page.tsx` to display a team's current roster.
+- [ ] **Task**: On the "Players" page, add an "Add Player" button to each player row.
+- [ ] **Task (convex/rosters.ts)**:
+  - [ ] Create a new `addPlayerToRoster` mutation.
+  - [ ] This mutation must contain logic to check if adding the player violates the league's roster position limits before adding them.
+- [ ] **Task**: Connect the "Add Player" button to the new mutation and provide feedback to the user (success or error).
 
 ## Phase 5: Vercel AI SDK Integration
 
